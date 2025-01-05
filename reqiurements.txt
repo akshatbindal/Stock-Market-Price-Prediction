@@ -1,9 +1,0 @@
-streamlit
-numpy
-pandas
-matplotlib
-scikit-learn
-tensorflow
-keras
-ta
-yfinance==0.2.40
