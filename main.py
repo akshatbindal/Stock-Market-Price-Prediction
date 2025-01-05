@@ -124,14 +124,10 @@ def main():
             st.success(f"Model trained successfully!")
             st.subheader("Model Evaluation:")
             st.write("### Training Metrics")
-            st.write(f"**MSE:** {train_mse:.4f}")
-            st.write(f"**MAE:** {train_mae:.4f}")
             st.write(f"**R2 Score:** {train_r2:.4f}")
             st.write(f"**MAPE:** {train_mape:.4f}%")
 
             st.write("### Testing Metrics")
-            st.write(f"**MSE:** {test_mse:.4f}")
-            st.write(f"**MAE:** {test_mae:.4f}")
             st.write(f"**R2 Score:** {test_r2:.4f}")
             st.write(f"**MAPE:** {test_mape:.4f}%")
 
