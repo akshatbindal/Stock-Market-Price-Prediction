@@ -9,19 +9,38 @@ import numpy as np
 import pandas as pd
 
 def main():
-    st.title("Stock Prediction with LSTM")
+    st.title("LSTM Model Trainer for Stock Price Prediction") 
+
+    # Show popup with project description
+    if st.button("Show Project Description"):
+        st.warning("Disclaimer: This is not a financial advice. It is for educational and research purposes only.")
+        st.info("""
+        ## Project Description
+        This project is designed to train a state-of-the-art LSTM model to predict stock prices. 
+        Follow the steps below to use the application:
+
+        1. **Input Parameters**: Enter the ticker symbol, start date, end date, and window size in the sidebar. Ticker symbol can be found from Yahoo Finance for the stock you want to predict.
+        2. **Advanced Parameters**: Adjust the neurons, layers, dropout rate, optimizer, and loss function as needed.
+        3. **Fetch Data**: Click the "Fetch Data" button to load the stock data and calculate technical indicators.
+        4. **Select Features**: Choose the features you want to use for training the model.
+        5. **Start Training**: Click the "Start Training" button to train the LSTM model with the selected features and parameters.
+        6. **Model Evaluation**: View the training and testing metrics to evaluate the model's performance.
+        7. **Predictions vs Actual Plots**: Visualize the predicted and actual stock prices for both training and testing data.
+
+        Note: Ensure you have a stable internet connection to fetch the stock data.
+        """)
 
     # Sidebar Inputs
     st.sidebar.header("Input Parameters")
     ticker = st.sidebar.text_input("Ticker Symbol", value="^NSEI")
-    start_date = st.sidebar.date_input("Start Date", value=pd.to_datetime("2014-01-01"))
-    end_date = st.sidebar.date_input("End Date", value=pd.to_datetime("2024-12-01"))
-    window_size = st.sidebar.slider("Window Size", 10, 50, 20)
+    start_date = st.sidebar.date_input("Start Date", value=pd.to_datetime("2010-01-01"))
+    end_date = st.sidebar.date_input("End Date", value=pd.to_datetime("2025-01-01"))
+    window_size = st.sidebar.slider("Window Size", 10, 60, 20)
 
     # Advanced Parameters
     st.sidebar.header("Advanced Parameters")
     neurons = st.sidebar.slider("Neurons", 10, 200, 100)
-    layers = st.sidebar.slider("Layers", 1, 5, 1)
+    layers = st.sidebar.slider("Layers", 1, 5, 2)
     dropout = st.sidebar.slider("Dropout", 0.0, 0.5, 0.2)
     optimizer = st.sidebar.selectbox("Optimizer", ["adam", "sgd", "rmsprop"])
     loss = st.sidebar.selectbox("Loss Function", ["mean_squared_error", "mean_absolute_error"])
@@ -100,11 +119,24 @@ def main():
                 )[:, 0]
 
             # Evaluate model
-            _, _, _, test_mape = evaluate_model(y_test_rescaled, test_pred_rescaled)
-            st.success(f"Model trained successfully! Test MAPE: {test_mape:.2f}%")
+            train_mse, train_mae, train_r2, train_mape = evaluate_model(y_train_rescaled, train_pred_rescaled)
+            test_mse, test_mae, test_r2, test_mape = evaluate_model(y_test_rescaled, test_pred_rescaled)
+            st.success(f"Model trained successfully!")
+            st.subheader("Model Evaluation:")
+            st.write("### Training Metrics")
+            st.write(f"**MSE:** {train_mse:.4f}")
+            st.write(f"**MAE:** {train_mae:.4f}")
+            st.write(f"**R2 Score:** {train_r2:.4f}")
+            st.write(f"**MAPE:** {train_mape:.4f}%")
+
+            st.write("### Testing Metrics")
+            st.write(f"**MSE:** {test_mse:.4f}")
+            st.write(f"**MAE:** {test_mae:.4f}")
+            st.write(f"**R2 Score:** {test_r2:.4f}")
+            st.write(f"**MAPE:** {test_mape:.4f}%")
 
             # Plot Results
-            st.subheader("Predictions vs Actual")
+            st.subheader("Predictions vs Actual Plots")
             fig, ax = plt.subplots(2, 1, figsize=(12, 8))
             ax[0].plot(y_train_rescaled, label="Actual (Train)")
             ax[0].plot(train_pred_rescaled, label="Predicted (Train)")
